@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Pilgrimage Route Map 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 0;
+            gap: 0;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 20px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 0;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .map-container {
+            flex: 1;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            overflow-y: auto;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .day-card {
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #E5E7EB;
+            cursor: default;
+            transition: all 0.3s;
+            border-left-width: 6px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .day-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .day-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .day-card:hover .day-number {
+            transform: scale(1.05);
+        }
+
+        .day-date {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .day-route {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .transport-icon {
+            font-size: 14px;
+        }
+
+        .locations {
+            padding-left: 15px;
+            margin-top: 8px;
+        }
+
+        .location-item {
+            font-size: 12px;
+            color: #4B5563;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: start;
+            gap: 6px;
+        }
+
+        .location-item::before {
+            content: "📍";
+            font-size: 10px;
+        }
+
+        .overnight {
+            display: inline-block;
+            background: #F3F4F6;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #4B5563;
+            margin-top: 8px;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .legend:hover {
+            transform: scale(1.02);
+        }
+
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #1F2937;
+            font-size: 14px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .legend-line {
+            width: 35px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .legend-line.dashed {
+            background: repeating-linear-gradient(90deg,
+                    currentColor,
+                    currentColor 6px,
+                    transparent 6px,
+                    transparent 12px);
+        }
+
+        .legend-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .transport-icon-marker {
+            background: transparent !important;
+            border: none !important;
+            transition: transform 0.3s;
+        }
+
+        .transport-icon-marker:hover {
+            transform: scale(1.2);
+        }
+
+        .day-label-marker {
+            background: transparent !important;
+            border: none !important;
+            transition: transform 0.3s;
+        }
+
+        .day-label-marker:hover {
+            transform: scale(1.15);
+        }
+
+        .city-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1F2937;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8), -1px -1px 2px rgba(255, 255, 255, 0.8), 1px -1px 2px rgba(255, 255, 255, 0.8), -1px 1px 2px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            white-space: nowrap;
+            background: transparent;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .route-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1F2937;
+            border: 2px solid #E5E7EB;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .route-tooltip {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(102, 126, 234, 0.3) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .transport-tooltip {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(102, 126, 234, 0.3) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .city-popup .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                max-width: 100%;
+            }
+        }
+
+        .back-button {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            color: #764ba2;
+        }
+
+        .back-button::before {
+            content: "←";
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-button">Back to Home</a>
+    <div class="container">
+        <div class="main-content">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize map centered on India
+        const map = L.map('map', {
+            zoomControl: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            boxZoom: true,
+            keyboard: true,
+            dragging: true
+        }).setView([23.5, 80.0], 5);
+
+        // Base map layer - Clean overview map for showing full route
+        const baseMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO',
+            maxZoom: 19,
+            subdomains: 'abcd'
+        }).addTo(map);
+
+        // Detailed map layer - Shows more detail when zoomed in
+        const detailedMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        });
+
+        // Terrain map layer - Shows terrain features
+        const terrainMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 18,
+            ext: 'png'
+        });
+
+        // Layer control for switching between map types
+        const baseMaps = {
+            "Overview Map": baseMap,
+            "Detailed Streets": detailedMap,
+            "Terrain View": terrainMap
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+
+        // City coordinates - mark major cities (flight destinations) vs minor (road destinations)
+        const cities = {
+            delhi: { lat: 28.6139, lng: 77.2090, name: 'Delhi', isMajor: true },
+            nashik: { lat: 19.9975, lng: 73.7898, name: 'Nashik', isMajor: true },
+            trimbakeshwar: { lat: 19.9333, lng: 73.5333, name: 'Trimbakeshwar', isMajor: false },
+            shirdi: { lat: 19.7645, lng: 74.4777, name: 'Shirdi', isMajor: false },
+            guwahati: { lat: 26.1445, lng: 91.7362, name: 'Guwahati', isMajor: true },
+            vrindavan: { lat: 27.5806, lng: 77.6979, name: 'Vrindavan/Mathura', isMajor: false }
+        };
+
+        // Standard colors: one for flights, one for roads
+        const FLIGHT_COLOR = '#3B82F6'; // Blue for flights
+        const ROAD_COLOR = '#10B981';   // Green for roads
+
+        // Route data
+        const routes = [
+            {
+                day: 1,
+                date: 'Sat, Mar 28, 2026',
+                path: ['delhi'],
+                transport: 'plane',
+                color: FLIGHT_COLOR,
+                locations: ['Sai Baba Temple', 'Our Lady of Vailankanni Shrine', 'Khan Market', 'Patte Shah Dargah'],
+                overnight: 'Delhi',
+                from: 'Airport',
+                to: 'Delhi'
+            },
+            {
+                day: 2,
+                date: 'Sun, Mar 29, 2026',
+                path: ['delhi', 'nashik', 'trimbakeshwar'],
+                segments: [
+                    { from: 'delhi', to: 'nashik', transport: 'plane' },
+                    { from: 'nashik', to: 'trimbakeshwar', transport: 'car' }
+                ],
+                transport: 'mixed', // mixed transport for this day
+                color: FLIGHT_COLOR, // Use flight color for mixed routes
+                locations: ['Flight 7:30am', 'Kala Ram Mandir', 'Trimbakeshwar Temple'],
+                overnight: 'Trimbakeshwar',
+                from: 'Delhi',
+                to: 'Trimbakeshwar'
+            },
+            {
+                day: 3,
+                date: 'Mon, Mar 30, 2026',
+                path: ['trimbakeshwar', 'shirdi'],
+                transport: 'car',
+                color: ROAD_COLOR,
+                locations: ['Trimbakeshwar Temple 5:30am', 'Sai Baba Temple'],
+                overnight: 'Shirdi',
+                from: 'Trimbakeshwar',
+                to: 'Shirdi'
+            },
+            {
+                day: 4,
+                date: 'Tue, Mar 31, 2026',
+                path: ['shirdi', 'nashik', 'delhi'],
+                segments: [
+                    { from: 'shirdi', to: 'nashik', transport: 'car' },
+                    { from: 'nashik', to: 'delhi', transport: 'plane' }
+                ],
+                transport: 'mixed', // mixed transport for this day
+                color: FLIGHT_COLOR, // Use flight color for mixed routes
+                locations: ['Sai Temple 4:30am', 'Flight to Delhi'],
+                overnight: 'Delhi',
+                from: 'Shirdi',
+                to: 'Delhi'
+            },
+            {
+                day: 5,
+                date: 'Wed, Apr 1, 2026',
+                path: ['delhi', 'guwahati'],
+                transport: 'plane',
+                color: FLIGHT_COLOR,
+                locations: ['Flight 10:20am', 'Maa Kamakhya Devi Temple 3:30pm'],
+                overnight: 'Guwahati',
+                from: 'Delhi',
+                to: 'Guwahati'
+            },
+            {
+                day: 6,
+                date: 'Thu, Apr 2, 2026',
+                path: ['guwahati', 'delhi'],
+                transport: 'plane',
+                color: FLIGHT_COLOR,
+                locations: ['Maa Kamakhya Devi Temple 5:00am', 'Flight 1:15pm'],
+                overnight: 'Delhi',
+                from: 'Guwahati',
+                to: 'Delhi'
+            },
+            {
+                day: 7,
+                date: 'Fri, Apr 3, 2026',
+                path: ['delhi', 'vrindavan', 'delhi'],
+                transport: 'car',
+                color: ROAD_COLOR,
+                locations: ['Neem Karoli Baba Samadhi', 'Devraha Baba Samadhi', 'Sripad Baba Ashram', 'Krishna Janambhoomi'],
+                overnight: 'Delhi',
+                from: 'Delhi',
+                to: 'Vrindavan/Mathura'
+            },
+            {
+                day: 8,
+                date: 'Sat, Apr 4, 2026',
+                path: ['delhi'],
+                transport: 'car',
+                color: ROAD_COLOR,
+                locations: ['Meet Master', 'Departure'],
+                overnight: 'Flight',
+                from: 'Delhi',
+                to: 'Airport'
+            }
+        ];
+
+        let routeLayers = {};
+        let cityMarkers = {};
+        let selectedDay = null;
+
+        // Function to update visibility based on zoom level
+        function updateVisibilityBasedOnZoom(zoom) {
+            const isZoomedOut = zoom <= 6;
+
+            // Update city markers visibility
+            Object.entries(cityMarkers).forEach(([key, cityData]) => {
+                const city = cities[key];
+                const offset = cityData.offset || { lat: 0.1, lng: 0.1 };
+
+                // Determine color: blue for airport/flight cities, green for road cities
+                const cityColor = city.isMajor ? FLIGHT_COLOR : ROAD_COLOR;
+
+                if (isZoomedOut) {
+                    // When zoomed out: show only major cities (flight destinations)
+                    if (city.isMajor) {
+                        cityData.marker.setStyle({
+                            radius: 12,
+                            fillColor: cityColor,
+                            color: '#ffffff',
+                            weight: 4,
+                            opacity: 1,
+                            fillOpacity: 0.95
+                        });
+                        // Use slightly larger offset when zoomed out to spread labels
+                        const zoomOutOffset = {
+                            lat: offset.lat,
+                            lng: offset.lng * 1.5
+                        };
+                        cityData.label.setLatLng([city.lat + zoomOutOffset.lat, city.lng + zoomOutOffset.lng]);
+                        cityData.label.setOpacity(1);
+                    } else {
+                        // Hide minor cities when zoomed out
+                        cityData.marker.setStyle({ opacity: 0, fillOpacity: 0 });
+                        cityData.label.setOpacity(0);
+                    }
+                } else {
+                    // When zoomed in: show all cities with normal offset
+                    cityData.marker.setStyle({
+                        radius: 10,
+                        fillColor: cityColor,
+                        color: '#ffffff',
+                        weight: 3,
+                        opacity: 1,
+                        fillOpacity: 0.95
+                    });
+                    // Use normal offset when zoomed in
+                    cityData.label.setLatLng([city.lat + offset.lat, city.lng + offset.lng]);
+                    cityData.label.setOpacity(1);
+                }
+            });
+
+            // Update route visibility
+            Object.entries(routeLayers).forEach(([day, layers]) => {
+                const route = routes.find(r => r.day === parseInt(day));
+                if (!route) return;
+
+                // Check if route has segments
+                const hasSegments = route.segments && route.segments.length > 0;
+
+                layers.forEach((layer, layerIdx) => {
+                    if (isZoomedOut) {
+                        // When zoomed out: show only flight routes
+                        let shouldShow = false;
+
+                        if (hasSegments && layer._isSegment) {
+                            // For routes with segments, check this specific segment
+                            shouldShow = layer._segmentTransport === 'plane';
+                        } else if (!hasSegments) {
+                            // For single transport routes
+                            shouldShow = route.transport === 'plane';
+                        }
+
+                        if (shouldShow) {
+                            if (layer.setStyle) {
+                                layer.setStyle({ opacity: 0.9, fillOpacity: 0.95 });
+                            }
+                            if (layer.setOpacity) {
+                                layer.setOpacity(1);
+                            }
+                        } else {
+                            // Hide road routes when zoomed out
+                            if (layer.setStyle) {
+                                layer.setStyle({ opacity: 0, fillOpacity: 0 });
+                            }
+                            if (layer.setOpacity) {
+                                layer.setOpacity(0);
+                            }
+                        }
+                    } else {
+                        // When zoomed in: show all routes
+                        if (layer.setStyle) {
+                            layer.setStyle({ opacity: 0.9, fillOpacity: 0.95 });
+                        }
+                        if (layer.setOpacity) {
+                            layer.setOpacity(1);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Label offsets - all to the right of the city dot (very close)
+        const labelOffsets = {
+            delhi: { lat: 0, lng: 0.02 },
+            nashik: { lat: 0, lng: 0.02 },
+            trimbakeshwar: { lat: 0, lng: 0.02 },
+            shirdi: { lat: 0, lng: 0.02 },
+            guwahati: { lat: 0, lng: 0.02 },
+            vrindavan: { lat: 0, lng: 0.02 }
+        };
+
+        // Create city markers with labels
+        Object.entries(cities).forEach(([key, city]) => {
+            // Determine color: blue for airport/flight cities, green for road cities
+            const cityColor = city.isMajor ? FLIGHT_COLOR : ROAD_COLOR;
+
+            // City marker
+            const marker = L.circleMarker([city.lat, city.lng], {
+                radius: 10,
+                fillColor: cityColor,
+                color: '#ffffff',
+                weight: 3,
+                opacity: 1,
+                fillOpacity: 0.95
+            }).addTo(map);
+
+            // Simple hover effect
+            marker.on('mouseover', function () {
+                this.setStyle({
+                    radius: 12,
+                    weight: 4
+                });
+            });
+
+            marker.on('mouseout', function () {
+                this.setStyle({
+                    radius: 10,
+                    weight: 3
+                });
+            });
+
+            // Enhanced popup
+            marker.bindPopup(`
+                <div style="text-align: center; padding: 5px;">
+                    <b style="font-size: 16px; color: ${cityColor};">${city.name}</b>
+                </div>
+            `, {
+                className: 'city-popup'
+            });
+
+            // City label - positioned to the right of the city dot
+            const offset = labelOffsets[key] || { lat: 0, lng: 0.02 };
+            const cityLabel = L.marker([city.lat + offset.lat, city.lng + offset.lng], {
+                icon: L.divIcon({
+                    html: `<div class="city-label">${city.name}</div>`,
+                    className: 'city-label-marker',
+                    iconSize: [null, null],
+                    iconAnchor: [0, 0]
+                }),
+                interactive: false,
+                zIndexOffset: 500
+            }).addTo(map);
+
+            cityMarkers[key] = { marker, label: cityLabel, offset: offset };
+        });
+
+        // Helper function to calculate midpoint of a route
+        function getMidpoint(coord1, coord2) {
+            return [
+                (coord1[0] + coord2[0]) / 2,
+                (coord1[1] + coord2[1]) / 2
+            ];
+        }
+
+        // Helper function to create transport icon with realistic SVG
+        function createTransportIcon(transport, color) {
+            let svgIcon = '';
+
+            if (transport === 'plane') {
+                // Realistic airplane icon
+                svgIcon = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="${color}" stroke="white" stroke-width="0.5"/>
+                </svg>`;
+            } else {
+                // Realistic car icon
+                svgIcon = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="${color}" stroke="white" stroke-width="0.5"/>
+                </svg>`;
+            }
+
+            const iconHtml = `<div style="
+                background: white;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+                border: 2px solid ${color};
+            ">
+                ${svgIcon}
+            </div>`;
+
+            return L.divIcon({
+                html: iconHtml,
+                className: 'transport-icon-marker',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+            });
+        }
+
+        // Function to check if two routes share the same path (reversed)
+        function routesSharePath(route1, route2) {
+            if (route1.transport !== 'plane' || route2.transport !== 'plane') return false;
+            if (route1.path.length !== 2 || route2.path.length !== 2) return false;
+
+            const r1Path = route1.path.join(',');
+            const r2Path = route2.path.join(',');
+            const r2Reversed = [...route2.path].reverse().join(',');
+
+            return r1Path === r2Reversed;
+        }
+
+
+        // First, identify routes that share the same path (for combining)
+        const processedRoutes = new Set();
+        const routePairs = [];
+
+        routes.forEach((route1, idx1) => {
+            if (processedRoutes.has(idx1)) return;
+
+            routes.forEach((route2, idx2) => {
+                if (idx1 >= idx2 || processedRoutes.has(idx2)) return;
+                if (routesSharePath(route1, route2)) {
+                    routePairs.push({ route1, route2, idx1, idx2 });
+                    processedRoutes.add(idx1);
+                    processedRoutes.add(idx2);
+                }
+            });
+        });
+
+        // Draw routes with transport symbols
+        routes.forEach((route, routeIdx) => {
+            // Skip if this route is part of a pair (will be handled separately)
+            if (processedRoutes.has(routeIdx)) return;
+
+            const layers = [];
+
+            if (route.path.length > 1) {
+                const coordinates = route.path.map(cityKey => {
+                    const city = cities[cityKey];
+                    return [city.lat, city.lng];
+                });
+
+                // Check if route has segments with different transport modes
+                if (route.segments && route.segments.length > 0) {
+                    // Draw each segment separately with its own transport mode
+                    route.segments.forEach((segment, segIdx) => {
+                        const fromCity = cities[segment.from];
+                        const toCity = cities[segment.to];
+                        const segmentCoords = [[fromCity.lat, fromCity.lng], [toCity.lat, toCity.lng]];
+
+                        // Use appropriate color based on transport type
+                        const segmentColor = segment.transport === 'plane' ? FLIGHT_COLOR : ROAD_COLOR;
+
+                        // Create solid route line
+                        const routeLine = L.polyline(segmentCoords, {
+                            color: segmentColor,
+                            weight: 4,
+                            opacity: 0.8,
+                            smoothFactor: 1,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        }).addTo(map);
+
+                        // Store transport type in layer for visibility control
+                        routeLine._segmentTransport = segment.transport;
+                        routeLine._isSegment = true;
+
+                        layers.push(routeLine);
+
+                        // Place one icon at the center of the route
+                        const midpoint = getMidpoint(segmentCoords[0], segmentCoords[1]);
+                        const transportIcon = createTransportIcon(segment.transport, segmentColor);
+                        const iconMarker = L.marker(midpoint, {
+                            icon: transportIcon,
+                            interactive: false,
+                            zIndexOffset: 1000
+                        }).addTo(map);
+
+                        // Store transport type for visibility control
+                        iconMarker._segmentTransport = segment.transport;
+                        iconMarker._isSegment = true;
+
+                        layers.push(iconMarker);
+                    });
+                } else {
+                    // Single transport mode for entire route
+                    // Use appropriate color based on transport type
+                    const routeColor = route.transport === 'plane' ? FLIGHT_COLOR : ROAD_COLOR;
+
+                    // Create solid route line
+                    const routeLine = L.polyline(coordinates, {
+                        color: routeColor,
+                        weight: 4,
+                        opacity: 0.8,
+                        smoothFactor: 1,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(map);
+
+                    layers.push(routeLine);
+
+                    // Place one icon at the center of the route
+                    const midpoint = getMidpoint(coordinates[0], coordinates[coordinates.length - 1]);
+                    const transportIcon = createTransportIcon(route.transport, routeColor);
+                    const iconMarker = L.marker(midpoint, {
+                        icon: transportIcon,
+                        interactive: false,
+                        zIndexOffset: 1000
+                    }).addTo(map);
+
+                    layers.push(iconMarker);
+                }
+
+                // Add route start/end markers (no day numbers)
+                route.path.forEach((cityKey, idx) => {
+                    const city = cities[cityKey];
+                    if (idx === 0 || idx === route.path.length - 1) {
+                        // Use appropriate color based on transport type
+                        const markerColor = route.transport === 'plane' ? FLIGHT_COLOR :
+                            (route.segments ? FLIGHT_COLOR : ROAD_COLOR);
+                        const marker = L.circleMarker([city.lat, city.lng], {
+                            radius: 10,
+                            fillColor: markerColor,
+                            color: '#ffffff',
+                            weight: 3,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        }).addTo(map);
+
+                        layers.push(marker);
+                    }
+                });
+            }
+
+            routeLayers[route.day] = layers;
+        });
+
+        // Draw combined bidirectional routes (same path, opposite directions)
+        routePairs.forEach(({ route1, route2 }) => {
+            const layers = [];
+            const coordinates = route1.path.map(cityKey => {
+                const city = cities[cityKey];
+                return [city.lat, city.lng];
+            });
+
+            // Use flight color for bidirectional flight routes
+            const routeColor = FLIGHT_COLOR;
+
+            // Create solid route line
+            const routeLine = L.polyline(coordinates, {
+                color: routeColor,
+                weight: 4,
+                opacity: 0.8,
+                smoothFactor: 1,
+                lineCap: 'round',
+                lineJoin: 'round'
+            }).addTo(map);
+
+            layers.push(routeLine);
+
+            // Place one plane icon at the center of the route
+            const midpoint = getMidpoint(coordinates[0], coordinates[coordinates.length - 1]);
+            const planeIcon = createTransportIcon('plane', routeColor);
+            const planeMarker = L.marker(midpoint, {
+                icon: planeIcon,
+                interactive: false,
+                zIndexOffset: 1000
+            }).addTo(map);
+
+            planeMarker._segmentTransport = 'plane';
+            planeMarker._isSegment = true;
+
+            layers.push(planeMarker);
+
+            // Store layers for both routes
+            routeLayers[route1.day] = layers;
+            routeLayers[route2.day] = layers; // Share the same layers
+        });
+
+
+        // Auto-switch to detailed map when zoomed in for better detail
+        map.on('zoomend', function () {
+            const currentZoom = map.getZoom();
+
+            // Switch map layers based on zoom
+            if (currentZoom >= 9) {
+                // When zoomed in close, show detailed street map
+                if (map.hasLayer(baseMap)) {
+                    map.removeLayer(baseMap);
+                }
+                if (!map.hasLayer(detailedMap)) {
+                    detailedMap.addTo(map);
+                }
+            } else {
+                // When zoomed out, show overview map
+                if (map.hasLayer(detailedMap)) {
+                    map.removeLayer(detailedMap);
+                }
+                if (!map.hasLayer(baseMap)) {
+                    baseMap.addTo(map);
+                }
+            }
+
+            // Update visibility of cities and routes based on zoom
+            updateVisibilityBasedOnZoom(currentZoom);
+        });
+
+        // Initial visibility update
+        updateVisibilityBasedOnZoom(map.getZoom());
+    </script>
+</body>
+
+</html>
