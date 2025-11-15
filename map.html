@@ -1,191 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>India Pilgrimage Route Map 2026</title>
+    <title>Route Map - Indus Routes</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="fonts/indus-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Ensure navigation bar displays correctly on map page */
+        header.simple_menu {
+            z-index: 10000 !important;
+            position: fixed !important;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-attachment: fixed;
+        
+        /* Dark background fallback for banner when image is missing */
+        .inside_title.image_bck {
+            background-color: #292929;
         }
-
-        .container {
+        
+        .map-wrapper {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: calc(100vh - 280px);
+            min-height: 600px;
             padding: 0;
             gap: 0;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 12px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .header h1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 20px;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .header p {
-            color: #6B7280;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .main-content {
+        
+        .map-wrapper .main-content {
+            height: 100%;
             display: flex;
             gap: 0;
             flex: 1;
             min-height: 0;
         }
-
-        .map-container {
+        
+        .map-wrapper .map-container {
             flex: 1;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 15px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            background: #fff;
+            border-radius: 8px;
             overflow: hidden;
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         #map {
             width: 100%;
             height: 100%;
-        }
-
-        .sidebar {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            padding: 25px;
-            overflow-y: auto;
-            max-width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .sidebar h2 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .day-card {
-            padding: 18px;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            border: 2px solid #E5E7EB;
-            cursor: default;
-            transition: all 0.3s;
-            border-left-width: 6px;
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .day-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .day-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .day-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
-        }
-
-        .day-card:hover .day-number {
-            transform: scale(1.05);
-        }
-
-        .day-date {
-            font-size: 12px;
-            color: #6B7280;
-        }
-
-        .day-route {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #1F2937;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .transport-icon {
-            font-size: 14px;
-        }
-
-        .locations {
-            padding-left: 15px;
-            margin-top: 8px;
-        }
-
-        .location-item {
-            font-size: 12px;
-            color: #4B5563;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: start;
-            gap: 6px;
-        }
-
-        .location-item::before {
-            content: "📍";
-            font-size: 10px;
-        }
-
-        .overnight {
-            display: inline-block;
-            background: #F3F4F6;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #4B5563;
-            margin-top: 8px;
         }
 
         .legend {
@@ -362,61 +231,86 @@
         }
 
         @media (max-width: 1024px) {
-            .main-content {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                max-width: 100%;
+            .map-wrapper {
+                height: calc(100vh - 300px);
+                min-height: 500px;
             }
         }
 
-        .back-button {
-            position: absolute;
-            top: 80px;
-            left: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 12px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            text-decoration: none;
-            color: #667eea;
-            font-weight: 600;
+        /* Map Zoom Notice */
+        .map-zoom-notice {
+            background: rgba(41, 41, 41, 0.95);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
             font-size: 14px;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
         }
 
-        .back-button:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            color: #764ba2;
+        .map-zoom-notice strong {
+            color: #fff;
+            font-weight: 600;
         }
 
-        .back-button::before {
-            content: "←";
-            font-size: 18px;
+        .map-zoom-notice i {
+            margin-right: 8px;
+            color: #667eea;
         }
+
     </style>
 </head>
 
-<body>
-    <a href="index.html" class="back-button">Back to Home</a>
+<body class="passp_white">
+<div class="page" id="page">
+  <div class="head_bck" data-color="#292929"  data-opacity="0.5"></div>
+  
+  <!-- Start  Header Section -->
+  <div id="nav-placeholder"></div>
+
+  <div class="inside_title image_bck bordered_wht_border white_txt" data-image="img/What-We-Do-banner.jpg" style="min-height: 100px;">
+    <!-- Over -->
+    <div class="over" data-opacity="0.2" data-color="#000"></div>
     <div class="container">
-        <div class="main-content">
-            <div class="map-container">
-                <div id="map"></div>
-            </div>
-        </div>
+      <div class="row">
+        <div class="col-md-6"><h1>Route Map</h1></div>
+        <div class="col-md-6 text-right"><div class="breadcrumbs"><a href="index.html">Home</a> Route Map</div></div>
+      </div> 
     </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="bordered_block col-md-12 grey_border">
+          <div class="container">
+            <div class="map-zoom-notice">
+              <i class="fa fa-info-circle"></i>
+              <strong>Please zoom in to see more detail</strong> - Use the zoom controls on the map or scroll to explore different areas in greater detail.
+            </div>
+            <div class="map-wrapper">
+              <div class="main-content">
+                <div class="map-container">
+                  <div id="map"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+  
+</div>
 
     <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
         // Initialize map centered on India
         const map = L.map('map', {
             zoomControl: true,
@@ -491,7 +385,7 @@
                 path: ['delhi', 'nashik', 'trimbakeshwar'],
                 segments: [
                     { from: 'delhi', to: 'nashik', transport: 'plane' },
-                    { from: 'nashik', to: 'trimbakeshwar', transport: 'car' }
+                    { from: 'nashik', to: 'trimbakeshwar', transport: 'bus' }
                 ],
                 transport: 'mixed', // mixed transport for this day
                 color: FLIGHT_COLOR, // Use flight color for mixed routes
@@ -504,7 +398,7 @@
                 day: 3,
                 date: 'Mon, Mar 30, 2026',
                 path: ['trimbakeshwar', 'shirdi'],
-                transport: 'car',
+                transport: 'bus',
                 color: ROAD_COLOR,
                 locations: ['Trimbakeshwar Temple 5:30am', 'Sai Baba Temple'],
                 overnight: 'Shirdi',
@@ -514,13 +408,9 @@
             {
                 day: 4,
                 date: 'Tue, Mar 31, 2026',
-                path: ['shirdi', 'nashik', 'delhi'],
-                segments: [
-                    { from: 'shirdi', to: 'nashik', transport: 'car' },
-                    { from: 'nashik', to: 'delhi', transport: 'plane' }
-                ],
-                transport: 'mixed', // mixed transport for this day
-                color: FLIGHT_COLOR, // Use flight color for mixed routes
+                path: ['shirdi', 'delhi'],
+                transport: 'plane',
+                color: FLIGHT_COLOR,
                 locations: ['Sai Temple 4:30am', 'Flight to Delhi'],
                 overnight: 'Delhi',
                 from: 'Shirdi',
@@ -552,7 +442,7 @@
                 day: 7,
                 date: 'Fri, Apr 3, 2026',
                 path: ['delhi', 'vrindavan', 'delhi'],
-                transport: 'car',
+                transport: 'bus',
                 color: ROAD_COLOR,
                 locations: ['Neem Karoli Baba Samadhi', 'Devraha Baba Samadhi', 'Sripad Baba Ashram', 'Krishna Janambhoomi'],
                 overnight: 'Delhi',
@@ -563,7 +453,7 @@
                 day: 8,
                 date: 'Sat, Apr 4, 2026',
                 path: ['delhi'],
-                transport: 'car',
+                transport: 'bus',
                 color: ROAD_COLOR,
                 locations: ['Meet Master', 'Departure'],
                 overnight: 'Flight',
@@ -750,21 +640,37 @@
             ];
         }
 
+        // Helper function to calculate bearing (direction) between two coordinates
+        function calculateBearing(coord1, coord2) {
+            const lat1 = coord1[0] * Math.PI / 180;
+            const lat2 = coord2[0] * Math.PI / 180;
+            const dLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+            const bearing = Math.atan2(y, x);
+            return (bearing * 180 / Math.PI + 360) % 360;
+        }
+
         // Helper function to create transport icon with realistic SVG
-        function createTransportIcon(transport, color) {
+        function createTransportIcon(transport, color, bearing = 0) {
             let svgIcon = '';
 
             if (transport === 'plane') {
-                // Realistic airplane icon
+                // Realistic airplane icon pointing right (will be rotated)
                 svgIcon = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="${color}" stroke="white" stroke-width="0.5"/>
                 </svg>`;
             } else {
-                // Realistic car icon
+                // Bus icon - always straight (not rotated)
                 svgIcon = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="${color}" stroke="white" stroke-width="0.5"/>
+                    <path d="M4 16c0 .88.39 1.67 1 2.22V20a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h8v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z" fill="${color}" stroke="white" stroke-width="0.5"/>
                 </svg>`;
             }
+
+            // Only rotate planes, keep buses straight
+            const rotation = transport === 'plane' ? `transform: rotate(${bearing}deg);` : '';
 
             const iconHtml = `<div style="
                 background: white;
@@ -776,6 +682,7 @@
                 justify-content: center;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.25);
                 border: 2px solid ${color};
+                ${rotation}
             ">
                 ${svgIcon}
             </div>`;
@@ -785,6 +692,34 @@
                 className: 'transport-icon-marker',
                 iconSize: [32, 32],
                 iconAnchor: [16, 16]
+            });
+        }
+
+        // Helper function to create arrow marker
+        function createArrowMarker(latlng, bearing, color) {
+            // Actual arrow shape with shaft and arrowhead pointing north (0 degrees, will be rotated to match bearing)
+            const arrowIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Arrow shaft pointing up (north) -->
+                <line x1="12" y1="20" x2="12" y2="8" stroke="${color}" stroke-width="3" stroke-linecap="round"/>
+                <!-- Arrowhead pointing up (north) -->
+                <path d="M12 8 L8 12 M12 8 L16 12" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M8 12 L12 8 L16 12 Z" fill="${color}"/>
+            </svg>`;
+
+            const iconHtml = `<div style="
+                transform: rotate(${bearing}deg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                ${arrowIcon}
+            </div>`;
+
+            return L.divIcon({
+                html: iconHtml,
+                className: 'arrow-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
             });
         }
 
@@ -842,7 +777,10 @@
                         // Use appropriate color based on transport type
                         const segmentColor = segment.transport === 'plane' ? FLIGHT_COLOR : ROAD_COLOR;
 
-                        // Create solid route line
+                        // Calculate bearing for direction
+                        const bearing = calculateBearing(segmentCoords[0], segmentCoords[1]);
+
+                        // Create solid route line with arrow pattern
                         const routeLine = L.polyline(segmentCoords, {
                             color: segmentColor,
                             weight: 4,
@@ -858,9 +796,23 @@
 
                         layers.push(routeLine);
 
-                        // Place one icon at the center of the route
+                        // Add arrow markers along the route
+                        const numArrows = 2; // Number of arrows per segment
+                        for (let i = 1; i <= numArrows; i++) {
+                            const t = i / (numArrows + 1);
+                            const arrowLat = segmentCoords[0][0] + (segmentCoords[1][0] - segmentCoords[0][0]) * t;
+                            const arrowLng = segmentCoords[0][1] + (segmentCoords[1][1] - segmentCoords[0][1]) * t;
+                            const arrowMarker = L.marker([arrowLat, arrowLng], {
+                                icon: createArrowMarker([arrowLat, arrowLng], bearing, segmentColor),
+                                interactive: false,
+                                zIndexOffset: 999
+                            }).addTo(map);
+                            layers.push(arrowMarker);
+                        }
+
+                        // Place one icon at the center of the route with proper bearing
                         const midpoint = getMidpoint(segmentCoords[0], segmentCoords[1]);
-                        const transportIcon = createTransportIcon(segment.transport, segmentColor);
+                        const transportIcon = createTransportIcon(segment.transport, segmentColor, bearing);
                         const iconMarker = L.marker(midpoint, {
                             icon: transportIcon,
                             interactive: false,
@@ -878,6 +830,12 @@
                     // Use appropriate color based on transport type
                     const routeColor = route.transport === 'plane' ? FLIGHT_COLOR : ROAD_COLOR;
 
+                    // Check if this is a round trip (starts and ends at same city, or has return path)
+                    const isRoundTrip = route.path[0] === route.path[route.path.length - 1] && route.path.length > 2;
+
+                    // Calculate bearing for direction (from first to last point)
+                    const bearing = calculateBearing(coordinates[0], coordinates[coordinates.length - 1]);
+
                     // Create solid route line
                     const routeLine = L.polyline(coordinates, {
                         color: routeColor,
@@ -890,9 +848,72 @@
 
                     layers.push(routeLine);
 
-                    // Place one icon at the center of the route
+                    // Add arrow markers along the route
+                    if (isRoundTrip) {
+                        // For round trips, show one arrow going and one arrow coming
+                        // One arrow going (on first segment)
+                        if (coordinates.length > 1) {
+                            const t = 0.5; // Place arrow in middle of first segment
+                            const arrowLat = coordinates[0][0] + (coordinates[1][0] - coordinates[0][0]) * t;
+                            const arrowLng = coordinates[0][1] + (coordinates[1][1] - coordinates[0][1]) * t;
+                            
+                            // Calculate bearing for forward direction
+                            const forwardBearing = calculateBearing(coordinates[0], coordinates[1]);
+                            
+                            const arrowMarker = L.marker([arrowLat, arrowLng], {
+                                icon: createArrowMarker([arrowLat, arrowLng], forwardBearing, routeColor),
+                                interactive: false,
+                                zIndexOffset: 999
+                            }).addTo(map);
+                            layers.push(arrowMarker);
+                        }
+                        
+                        // One arrow coming back (on last segment)
+                        if (coordinates.length > 2) {
+                            const lastIdx = coordinates.length - 1;
+                            const t = 0.5; // Place arrow in middle of last segment
+                            const arrowLat = coordinates[lastIdx - 1][0] + (coordinates[lastIdx][0] - coordinates[lastIdx - 1][0]) * t;
+                            const arrowLng = coordinates[lastIdx - 1][1] + (coordinates[lastIdx][1] - coordinates[lastIdx - 1][1]) * t;
+                            
+                            // Calculate bearing for return direction
+                            const returnBearing = calculateBearing(coordinates[lastIdx - 1], coordinates[lastIdx]);
+                            
+                            const arrowMarker = L.marker([arrowLat, arrowLng], {
+                                icon: createArrowMarker([arrowLat, arrowLng], returnBearing, routeColor),
+                                interactive: false,
+                                zIndexOffset: 999
+                            }).addTo(map);
+                            layers.push(arrowMarker);
+                        }
+                    } else {
+                        // For one-way routes, show arrows only in forward direction
+                        const numArrows = Math.max(2, Math.floor(coordinates.length / 2));
+                        for (let i = 1; i <= numArrows; i++) {
+                            const t = i / (numArrows + 1);
+                            const totalDistance = coordinates.length - 1;
+                            const segmentIdx = Math.floor(t * totalDistance);
+                            const segmentT = (t * totalDistance) - segmentIdx;
+                            
+                            if (segmentIdx < totalDistance) {
+                                const arrowLat = coordinates[segmentIdx][0] + (coordinates[segmentIdx + 1][0] - coordinates[segmentIdx][0]) * segmentT;
+                                const arrowLng = coordinates[segmentIdx][1] + (coordinates[segmentIdx + 1][1] - coordinates[segmentIdx][1]) * segmentT;
+                                
+                                // Calculate bearing for this specific segment (forward direction)
+                                const segmentBearing = calculateBearing(coordinates[segmentIdx], coordinates[segmentIdx + 1]);
+                                
+                                const arrowMarker = L.marker([arrowLat, arrowLng], {
+                                    icon: createArrowMarker([arrowLat, arrowLng], segmentBearing, routeColor),
+                                    interactive: false,
+                                    zIndexOffset: 999
+                                }).addTo(map);
+                                layers.push(arrowMarker);
+                            }
+                        }
+                    }
+
+                    // Place one icon at the center of the route with proper bearing
                     const midpoint = getMidpoint(coordinates[0], coordinates[coordinates.length - 1]);
-                    const transportIcon = createTransportIcon(route.transport, routeColor);
+                    const transportIcon = createTransportIcon(route.transport, routeColor, bearing);
                     const iconMarker = L.marker(midpoint, {
                         icon: transportIcon,
                         interactive: false,
@@ -937,6 +958,11 @@
             // Use flight color for bidirectional flight routes
             const routeColor = FLIGHT_COLOR;
 
+            // Calculate bearing for route1 direction (going)
+            const bearing1 = calculateBearing(coordinates[0], coordinates[coordinates.length - 1]);
+            // Calculate bearing for route2 direction (coming back)
+            const bearing2 = calculateBearing(coordinates[coordinates.length - 1], coordinates[0]);
+
             // Create solid route line
             const routeLine = L.polyline(coordinates, {
                 color: routeColor,
@@ -949,25 +975,84 @@
 
             layers.push(routeLine);
 
-            // Place one plane icon at the center of the route
-            const midpoint = getMidpoint(coordinates[0], coordinates[coordinates.length - 1]);
-            const planeIcon = createTransportIcon('plane', routeColor);
-            const planeMarker = L.marker(midpoint, {
-                icon: planeIcon,
+            // Place plane icon going towards destination (first quarter of route)
+            const goingPlanePoint = [
+                coordinates[0][0] + (coordinates[coordinates.length - 1][0] - coordinates[0][0]) * 0.25,
+                coordinates[0][1] + (coordinates[coordinates.length - 1][1] - coordinates[0][1]) * 0.25
+            ];
+            const planeIconGoing = createTransportIcon('plane', routeColor, bearing1);
+            const planeMarkerGoing = L.marker(goingPlanePoint, {
+                icon: planeIconGoing,
                 interactive: false,
                 zIndexOffset: 1000
             }).addTo(map);
+            planeMarkerGoing._segmentTransport = 'plane';
+            planeMarkerGoing._isSegment = true;
+            layers.push(planeMarkerGoing);
 
-            planeMarker._segmentTransport = 'plane';
-            planeMarker._isSegment = true;
+            // Place arrow going towards destination (second quarter of route)
+            const goingArrowPoint = [
+                coordinates[0][0] + (coordinates[coordinates.length - 1][0] - coordinates[0][0]) * 0.35,
+                coordinates[0][1] + (coordinates[coordinates.length - 1][1] - coordinates[0][1]) * 0.35
+            ];
+            const arrowGoing = L.marker(goingArrowPoint, {
+                icon: createArrowMarker(goingArrowPoint, bearing1, routeColor),
+                interactive: false,
+                zIndexOffset: 999
+            }).addTo(map);
+            layers.push(arrowGoing);
 
-            layers.push(planeMarker);
+            // Place plane icon coming back (third quarter of route)
+            const comingPlanePoint = [
+                coordinates[0][0] + (coordinates[coordinates.length - 1][0] - coordinates[0][0]) * 0.65,
+                coordinates[0][1] + (coordinates[coordinates.length - 1][1] - coordinates[0][1]) * 0.65
+            ];
+            const planeIconComing = createTransportIcon('plane', routeColor, bearing2);
+            const planeMarkerComing = L.marker(comingPlanePoint, {
+                icon: planeIconComing,
+                interactive: false,
+                zIndexOffset: 1000
+            }).addTo(map);
+            planeMarkerComing._segmentTransport = 'plane';
+            planeMarkerComing._isSegment = true;
+            layers.push(planeMarkerComing);
+
+            // Place arrow coming back (last quarter of route)
+            const comingArrowPoint = [
+                coordinates[0][0] + (coordinates[coordinates.length - 1][0] - coordinates[0][0]) * 0.75,
+                coordinates[0][1] + (coordinates[coordinates.length - 1][1] - coordinates[0][1]) * 0.75
+            ];
+            const arrowComing = L.marker(comingArrowPoint, {
+                icon: createArrowMarker(comingArrowPoint, bearing2, routeColor),
+                interactive: false,
+                zIndexOffset: 999
+            }).addTo(map);
+            layers.push(arrowComing);
 
             // Store layers for both routes
             routeLayers[route1.day] = layers;
             routeLayers[route2.day] = layers; // Share the same layers
         });
 
+        // Fit map bounds to show all routes (including Delhi-Vrindavan)
+        const allCoordinates = [];
+        routes.forEach(route => {
+            if (route.path && route.path.length > 1) {
+                route.path.forEach(cityKey => {
+                    const city = cities[cityKey];
+                    if (city) {
+                        allCoordinates.push([city.lat, city.lng]);
+                    }
+                });
+            }
+        });
+
+        if (allCoordinates.length > 0) {
+            // Create a bounds object from all coordinates
+            const bounds = L.latLngBounds(allCoordinates);
+            // Fit the map to show all routes with some padding
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
 
         // Auto-switch to detailed map when zoomed in for better detail
         map.on('zoomend', function () {
@@ -998,7 +1083,10 @@
 
         // Initial visibility update
         updateVisibilityBasedOnZoom(map.getZoom());
+        }); // End DOMContentLoaded
     </script>
+<script src="js/jquery-1.11.3.min.js"></script> 
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
 </body>
-
 </html>
